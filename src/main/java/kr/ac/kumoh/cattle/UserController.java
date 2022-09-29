@@ -9,8 +9,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
-    @GetMapping("/{id}")
-    public String getUserNameById(@PathVariable("id")Integer userId){
+    @GetMapping("/find")
+    public String getUserNameById(@RequestParam(value = "id",required = false)Integer userId){
         return userService.getUserFullName(userId);
     }
 
@@ -19,10 +19,16 @@ public class UserController {
                               @RequestParam(value = "firstName",required = false)String firstName,
                               @RequestParam(value = "lastName",required = false)String lastName){
         User user=new User();
-        user.setId(2);
-        user.setLastName("fff");
-        user.setLastName("asd");
+        user.setId(id);
+        user.setFirstName(firstName);
+        user.setLastName(lastName);
         userService.insertUser(user);
         return "user/insert";
+    }
+
+    @GetMapping("/delete")
+    public  String deleteUser(@RequestParam(value = "id")Integer id){
+        userService.deleteUser(id);
+        return  "user/delete";
     }
 }
