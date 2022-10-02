@@ -10,8 +10,8 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/find")
-    public String getUserNameById(@RequestParam(value = "id",required = false)Integer userId){
-        return userService.getUserFullName(userId);
+    public String getUserById(@RequestParam(value = "id",required = false)Integer userId){
+        return userService.getUser(userId).get().getFirstName()+userService.getUser(userId).get().getLastName();
     }
 
     @GetMapping("/insert")
@@ -27,8 +27,14 @@ public class UserController {
     }
 
     @GetMapping("/delete")
-    public  String deleteUser(@RequestParam(value = "id")Integer id){
+    public String deleteUser(@RequestParam(value = "id")Integer id){
         userService.deleteUser(id);
         return  "user/delete";
+    }
+
+    @PostMapping("/create")
+    public @ResponseBody User create(@RequestBody User user){
+
+        return  user;
     }
 }

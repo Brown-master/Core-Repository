@@ -13,8 +13,8 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
-    public String getUserFullName(Integer userId) {
-        return userRepository.findById(userId).get().getFirstName()+userRepository.findById(userId).get().getLastName();
+    public Optional<User> getUser(Integer userId) {
+        return userRepository.findById(userId);
     }
 
     public void insertUser(User user){
