@@ -3,6 +3,8 @@ package kr.ac.kumoh.cattle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/user")
 public class UserController {
@@ -12,6 +14,11 @@ public class UserController {
     @GetMapping("/find")
     public String getUserById(@RequestParam(value = "id",required = false)Integer userId){
         return userService.getUser(userId).get().getFirstName()+userService.getUser(userId).get().getLastName();
+    }
+
+    @GetMapping("/findAll")
+    public List<User> getUserAll(){
+        return userService.getUserAll();
     }
 
     @GetMapping("/insert")
