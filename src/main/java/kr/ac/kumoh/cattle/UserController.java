@@ -21,7 +21,7 @@ public class UserController {
         return userService.getUserAll();
     }
 
-    @GetMapping("/insert")
+    @PostMapping("/insert")
     public  String insertUser(@RequestParam(value = "id",required = false)Integer id,
                               @RequestParam(value = "firstName",required = false)String firstName,
                               @RequestParam(value = "lastName",required = false)String lastName){
@@ -39,9 +39,4 @@ public class UserController {
         return  "user/delete";
     }
 
-    @PostMapping("/create")
-    public @ResponseBody User create(@RequestBody User user){
-
-        return  user;
-    }
 }
