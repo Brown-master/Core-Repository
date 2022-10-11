@@ -22,15 +22,8 @@ public class UserController {
     }
 
     @PostMapping("/insert")
-    public  String insertUser(@RequestParam(value = "id",required = false)Integer id,
-                              @RequestParam(value = "firstName",required = false)String firstName,
-                              @RequestParam(value = "lastName",required = false)String lastName){
-        User user=new User();
-        user.setId(id);
-        user.setFirstName(firstName);
-        user.setLastName(lastName);
-        userService.insertUser(user);
-        return "user/insert";
+    public User insertUser(@RequestBody User user){
+        return userService.insertUser(user);
     }
 
     @GetMapping("/delete")

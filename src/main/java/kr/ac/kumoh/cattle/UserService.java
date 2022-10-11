@@ -3,13 +3,14 @@ package kr.ac.kumoh.cattle;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
-public class UserService {
+public class UserService{
 
     @Autowired
     private UserRepository userRepository;
@@ -18,12 +19,12 @@ public class UserService {
         return userRepository.findById(userId);
     }
 
-    public void insertUser(User user){
+    public User insertUser(@RequestBody User user){
         userRepository.save(user);
+        return user;
     }
 
-    public void deleteUser(Integer userId) {
-        userRepository.deleteById(userId);
+    public void deleteUser(Integer userId) {userRepository.deleteById(userId);
     }
 
     public List<User> getUserAll(){return userRepository.findAll();}

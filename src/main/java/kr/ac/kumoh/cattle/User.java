@@ -1,5 +1,6 @@
 package kr.ac.kumoh.cattle;
 
+import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
 
 import javax.persistence.Column;
