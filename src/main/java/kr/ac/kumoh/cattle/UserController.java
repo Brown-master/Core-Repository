@@ -1,15 +1,26 @@
 package kr.ac.kumoh.cattle;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/user")
 public class UserController {
+
+    private Logger logger= LoggerFactory.getLogger(UserController.class);
     @Autowired
     private UserService userService;
+
+    @ExceptionHandler(value = NoSuchElementException.class)
+    public String controllerExceptionHandler(Exception e) {
+        logger.error(e.getMessage());
+        return "/error/404/";
+    }
 
     @GetMapping("/find")
     public String getUserById(@RequestParam(value = "id",required = false)Integer userId){
@@ -26,10 +37,9 @@ public class UserController {
         return userService.insertUser(user);
     }
 
-    @GetMapping("/delete")
+    @DeleteMapping("/delete")
     public String deleteUser(@RequestParam(value = "id")Integer id){
         userService.deleteUser(id);
         return  "user/delete";
     }
-
 }
