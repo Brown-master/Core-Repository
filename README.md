@@ -1,3 +1,3 @@
-# Brown-Master tow-truck proj
+# Brown-Master tow truck proj
 
 Spring WebMvc Preperation 
