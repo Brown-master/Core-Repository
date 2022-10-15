@@ -10,6 +10,7 @@ import java.util.NoSuchElementException;
 
 @RestController
 @RequestMapping("/user")
+@CrossOrigin(origins = "http://localhost:5000")
 public class UserController {
 
     private Logger logger= LoggerFactory.getLogger(UserController.class);
@@ -29,6 +30,7 @@ public class UserController {
 
     @GetMapping("/findAll")
     public List<User> getUserAll(){
+        logger.info("good!!");
         return userService.getUserAll();
     }
 
