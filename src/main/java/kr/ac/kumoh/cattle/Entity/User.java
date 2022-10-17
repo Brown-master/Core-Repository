@@ -1,4 +1,4 @@
-package kr.ac.kumoh.cattle;
+package kr.ac.kumoh.cattle.Entity;
 
 import lombok.Data;
 import org.hibernate.annotations.DynamicInsert;
