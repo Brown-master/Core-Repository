@@ -1,5 +1,7 @@
-package kr.ac.kumoh.cattle;
+package kr.ac.kumoh.cattle.Service;
 
+import kr.ac.kumoh.cattle.Entity.User;
+import kr.ac.kumoh.cattle.Repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

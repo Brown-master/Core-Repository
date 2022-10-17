@@ -1,5 +1,6 @@
-package kr.ac.kumoh.cattle;
+package kr.ac.kumoh.cattle.DTO;
 
+import kr.ac.kumoh.cattle.Entity.User;
 import lombok.Data;
 
 import java.io.Serializable;

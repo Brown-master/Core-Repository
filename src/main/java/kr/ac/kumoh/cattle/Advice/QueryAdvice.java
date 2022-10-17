@@ -1,5 +1,6 @@
-package kr.ac.kumoh.cattle;
+package kr.ac.kumoh.cattle.Advice;
 
+import kr.ac.kumoh.cattle.Controller.UserController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.bind.annotation.ExceptionHandler;
