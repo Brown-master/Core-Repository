@@ -16,12 +16,14 @@ import java.net.URL;
 @RequestMapping("/accident")
 @CrossOrigin(origins = "http://localhost:5000")
 public class AccidentInfoController {
+    private String apiKey="059980d47126472a865a1fced65d1948";
+    private String url="https://openapi.its.go.kr:9443/eventInfo";
     @GetMapping
     public String getAccident() throws IOException {
-        StringBuilder urlBuilder = new StringBuilder("https://openapi.its.go.kr:9443/eventInfo?apiKey=059980d47126472a865a1fced65d1948"); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("apiKey", "UTF-8") + "=" + URLEncoder.encode("059980d47126472a865a1fced65d1948", "UTF-8")); /*공개키*/
+        StringBuilder urlBuilder = new StringBuilder(url); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("apiKey", "UTF-8") + "=" + URLEncoder.encode(apiKey, "UTF-8")); /*공개키*/
         urlBuilder.append("&" + URLEncoder.encode("type","UTF-8") + "=" + URLEncoder.encode("all", "UTF-8")); /*도로유형*/
-        urlBuilder.append("&" + URLEncoder.encode("eventType","UTF-8") + "=" + URLEncoder.encode("1", "UTF-8")); /*이벤트유형*/
+        urlBuilder.append("&" + URLEncoder.encode("eventType","UTF-8") + "=" + URLEncoder.encode("acc", "UTF-8")); /*이벤트유형*/
         urlBuilder.append("&" + URLEncoder.encode("minX","UTF-8") + "=" + URLEncoder.encode("126.800000", "UTF-8")); /*최소경도영역*/
         urlBuilder.append("&" + URLEncoder.encode("maxX","UTF-8") + "=" + URLEncoder.encode("127.890000", "UTF-8")); /*최대경도영역*/
         urlBuilder.append("&" + URLEncoder.encode("minY","UTF-8") + "=" + URLEncoder.encode("34.900000", "UTF-8")); /*최소위도영역*/
