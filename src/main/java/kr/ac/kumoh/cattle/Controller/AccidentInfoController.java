@@ -1,5 +1,7 @@
 package kr.ac.kumoh.cattle.Controller;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -19,7 +21,7 @@ public class AccidentInfoController {
     private String apiKey="059980d47126472a865a1fced65d1948";
     private String url="https://openapi.its.go.kr:9443/eventInfo";
     @GetMapping
-    public String getAccident() throws IOException {
+    public JSONArray getAccident() throws IOException {
         StringBuilder urlBuilder = new StringBuilder(url); /*URL*/
         urlBuilder.append("?" + URLEncoder.encode("apiKey", "UTF-8") + "=" + URLEncoder.encode(apiKey, "UTF-8")); /*공개키*/
         urlBuilder.append("&" + URLEncoder.encode("type","UTF-8") + "=" + URLEncoder.encode("all", "UTF-8")); /*도로유형*/
@@ -45,9 +47,15 @@ public class AccidentInfoController {
         while ((line = rd.readLine()) != null) {
             sb.append(line);
         }
+        JSONObject responseJson = new JSONObject(sb.toString());
+        JSONArray items = responseJson.getJSONObject("body").getJSONArray("items");
+
+        for (int i = 0; i < items.length(); i++) {
+            items.getJSONObject(i).remove("endDate");
+        }
+        System.out.println(items);
         rd.close();
         conn.disconnect();
-        return sb.toString();
+        return items;
     }
-
 }
