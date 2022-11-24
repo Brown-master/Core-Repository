@@ -8,6 +8,7 @@ class CattleApplicationTests {
 
     @Test
     void contextLoads() {
+
     }
 
 }

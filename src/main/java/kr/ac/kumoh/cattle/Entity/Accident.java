@@ -57,11 +57,6 @@ public class Accident {
         this.date_time = date_time;
     }
 
-    public AccidentDTO makeDTO(){
-        return AccidentDTO.builder().accident_id(this.getId()).message(this.getMessage())
-                .road_name(this.getRoad_name()).road_num(this.getRoad_num()).road_direction(this.getRoad_direction())
-                .latitude(this.getLatitude()).longitude(this.getLongitude()).date_time(this.getDate_time()).build();
-    }
 
     public Long getId() {
         return accident_id;

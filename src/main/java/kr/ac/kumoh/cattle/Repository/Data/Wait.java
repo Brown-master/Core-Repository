@@ -12,6 +12,7 @@ public class Wait {
 
     private double longitude;
 
+    //TODO: 거리 판별
     public boolean distanceFilter(double user_latitude, double user_longitude){
         return true;
     }
