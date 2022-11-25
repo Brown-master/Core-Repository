@@ -12,44 +12,36 @@ import java.io.Serializable;
  * A DTO for the {@link Accident} entity
  */
 @Data
-@JsonIgnoreProperties(ignoreUnknown = true)
 public class AccidentDTO implements Serializable {
-    private String eventType;
-    private String getType;
-    private String eventDetailType;
-    private String coordX;
-    private String coordY;
-    private String lanesBlocked;
-    private String message;
-    private String roadName;
-    private String roadDrcType;
-    private String linkId;
-    private String roadNo;
-    private String lanesBlockType;
-    private String startDate;
-    private String type;
+    private final Long accident_id;
+    private final String message;
+    private final String road_name;
+    private final Integer road_num;
+    private final String road_direction;
+    private final Double latitude;
+    private final Double longitude;
+    private final String date_time;
 
-    public AccidentDTO(String eventType, String getType, String eventDetailType, String coordX, String coordY,
-                       String lanesBlocked, String message, String roadName, String roadDrcType, String linkId,
-                       String roadNo, String lanesBlockType, String startDate, String type) {
-        this.eventType = eventType;
-        this.getType = getType;
-        this.eventDetailType = eventDetailType;
-        this.coordX = coordX;
-        this.coordY = coordY;
-        this.lanesBlocked = lanesBlocked;
+    @Builder
+    public AccidentDTO(Long accident_id, String message, String road_name, Integer road_num, String road_direction, Double latitude, Double longitude, String date_time) {
+        this.accident_id = accident_id;
         this.message = message;
-        this.roadName = roadName;
-        this.roadDrcType = roadDrcType;
-        this.linkId = linkId;
-        this.roadNo = roadNo;
-        this.lanesBlockType = lanesBlockType;
-        this.startDate = startDate;
-        this.type = type;
+        this.road_name = road_name;
+        this.road_num = road_num;
+        this.road_direction = road_direction;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.date_time = date_time;
     }
 
-    public AccidentDTO() {
+    public Accident makeEntity(){
+        return Accident.builder().accident_id(this.accident_id).message(this.message)
+                .road_name(this.road_name).road_num(this.road_num).road_direction(this.road_direction)
+                .latitude(this.latitude).longitude(this.longitude).date_time(this.date_time).build();
     }
 
 
+    public int extractRequired(){
+        return 2;
+    }
 }

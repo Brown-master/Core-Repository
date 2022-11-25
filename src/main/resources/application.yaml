@@ -19,7 +19,7 @@ value:
   request_value:
     api_key: 059980d47126472a865a1fced65d1948
     event_type: acc
-    get_type: json
+    get_type: JSON
     min_y: 33.643
     max_y: 38.364
     min_x: 124.3636

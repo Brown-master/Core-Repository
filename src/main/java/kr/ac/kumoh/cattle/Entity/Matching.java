@@ -39,6 +39,12 @@ public class Matching {
         this.date_time = date_time;
     }
 
+    public MatchingDTO makeDTO(){
+        return MatchingDTO.builder().matching_id(this.getId()).
+                user_id(this.getUser_id()).accident(this.getAccident().makeDTO())
+                .date_time(this.getDate_time()).build();
+    }
+
     public Long getId() {
         return matching_id;
     }

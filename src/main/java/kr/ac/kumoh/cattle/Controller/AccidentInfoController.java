@@ -18,6 +18,7 @@ import java.net.URLEncoder;
 import java.net.URL;
 import java.util.*;
 
+/*
 @RestController
 @RequestMapping("/accident")
 @CrossOrigin(origins = "http://localhost:5000")
@@ -39,6 +40,7 @@ public class AccidentInfoController {
         for (int i = 0; i < items.length(); i++) {
             items.getJSONObject(i).remove("endDate");
         }
+
 
         List<AccidentDTO> dtos=new ArrayList<>(accidentService.jsonArrayToDTOList(items.toString()));
         for (int i = 0; i < dtos.size(); i++) {
@@ -63,3 +65,4 @@ public class AccidentInfoController {
 
 
 }
+*/

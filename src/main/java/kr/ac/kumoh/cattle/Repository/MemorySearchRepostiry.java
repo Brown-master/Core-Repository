@@ -10,9 +10,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 @Repository
 public class MemorySearchRepostiry implements SearchRepository{
-    private static Vector<Wait> wait_table = new Vector<Wait>();
+    public static Vector<Wait> wait_table = new Vector<Wait>();
 
-    private static ConcurrentHashMap<Long, Search> search_table = new ConcurrentHashMap<Long, Search>();
+    public static ConcurrentHashMap<Long, Search> search_table = new ConcurrentHashMap<Long, Search>();
 
     @Override
     public Long inquire(double user_latitude, double user_longitude){
@@ -43,11 +43,9 @@ public class MemorySearchRepostiry implements SearchRepository{
         wait_table.add(newone);
     }
 
-
-    @Override
     public Wait getWait(Long accident_id){
         for(int i=0; i<wait_table.size(); i++){
-            if(wait_table.get(i).getAccident_id() == accident_id) {
+            if(wait_table.get(i).getAccident_id().equals(accident_id)) {
                 return wait_table.get(i);
             }
         }
@@ -58,7 +56,7 @@ public class MemorySearchRepostiry implements SearchRepository{
     @Override
     public void deleteWait(Long accident_id){
         for(int i=0; i<wait_table.size(); i++){
-            if(wait_table.get(i).getAccident_id() == accident_id) {
+            if(wait_table.get(i).getAccident_id().equals(accident_id)) {
                 wait_table.remove(i);
                 break;
             }
@@ -68,12 +66,10 @@ public class MemorySearchRepostiry implements SearchRepository{
     @Override
     public boolean presentWait(Long accident_id){
         for(int i=0; i<wait_table.size(); i++){
-            if(wait_table.get(i).getAccident_id() == accident_id) {
+            if(wait_table.get(i).getAccident_id().equals(accident_id)) {
                 return true;
             }
         }
         return false;
     }
-
-
 }

@@ -13,6 +13,8 @@ import kr.ac.kumoh.cattle.Repository.Data.Search;
 import kr.ac.kumoh.cattle.Repository.Data.Wait;
 import kr.ac.kumoh.cattle.Repository.MemorySearchRepostiry;
 import org.apache.catalina.mapper.Mapper;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,76 +36,116 @@ import java.util.Map;
 public class AccidentService {
     @Autowired
     AccidentRepository accidentRepository;
+
     @Autowired
     MemorySearchRepostiry memorySearchRepostiry;
 
-    Logger logger=LoggerFactory.getLogger(AccidentService.class);
-    @Value("${value.request_value.api_key}") private String apiKey;
-    @Value("${value.request_value.url}") private String url;
-    @Value("${value.request_value.event_type}") private String eventType;
-    @Value("${value.request_value.get_type}") private String getType;
-    @Value("${value.request_value.max_x}") private String maxX;
-    @Value("${value.request_value.max_y}") private String maxY;
-    @Value("${value.request_value.min_x}") private String minX;
-    @Value("${value.request_value.min_y}") private String minY;
-    @Value("${value.request_value.type}") private String type;
 
-    //기존 사고 조회
-//    private AccidentDTO inquireAccident(double user_latitude, double user_longitude){
-//        Long result = memorySearchRepostiry.inquire(user_latitude,user_longitude);
-//            return result != null ? accidentRepository.findById(result).get().makeDTO() : null;
-//    }
+    //API 요청
+    private JSONArray apiConnection() throws IOException {
+        BufferedReader rd;
+        HttpURLConnection conn;
+        StringBuilder urlBuilder = new StringBuilder("https://openapi.its.go.kr:9443/eventInfo"); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("apiKey", "UTF-8") + "=" + URLEncoder.encode("059980d47126472a865a1fced65d1948", "UTF-8")); /*공개키*/
+        urlBuilder.append("&" + URLEncoder.encode("type","UTF-8") + "=" + URLEncoder.encode("all", "UTF-8")); /*도로유형*/
+        urlBuilder.append("&" + URLEncoder.encode("eventType","UTF-8") + "=" + URLEncoder.encode("acc", "UTF-8")); /*이벤트유형*/
+        urlBuilder.append("&" + URLEncoder.encode("minX","UTF-8") + "=" + URLEncoder.encode("124.3636", "UTF-8")); /*최소경도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("maxX","UTF-8") + "=" + URLEncoder.encode("130.9198", "UTF-8")); /*최대경도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("minY","UTF-8") + "=" + URLEncoder.encode("33.643", "UTF-8")); /*최소위도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("maxY","UTF-8") + "=" + URLEncoder.encode("38.364", "UTF-8")); /*최대위도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("getType","UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*출력타입*/
+        URL url = new URL(urlBuilder.toString());
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        conn.setRequestProperty("Content-type", "text/json;charset=UTF-8");
+        System.out.println("Response code: " + conn.getResponseCode());
 
-    //TODO: API 요청
-//    private List<AccidentDTO> responseItems() throws IOException {
-//        String itemsBuff=apiConnection();
-//        System.out.println(itemsBuff);
-//        return null;
-//    }
 
-    //중복사고 검증 후 정보 추가
-//    private synchronized boolean verifyAccident(AccidentDTO item){
-//        if(!memorySearchRepostiry.duplicateCheck(item.getAccident_id())) {
-//            memorySearchRepostiry.addSearch(item.getAccident_id(),
-//                    new Search(item.extractRequired(), 0, item.getLatitude(), item.getLongitude()));
-//            accidentRepository.save(item.makeEntity());
-//            memorySearchRepostiry.addWait(new Wait(item.getAccident_id(), item.getLatitude(), item.getLongitude()));
-//
-//            return true;
-//        }
-//
-//        return false;
-//    }
+        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
+            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        } else {
+            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
+        }
+
+        StringBuilder sb = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+            sb.append(line);
+        }
+        rd.close();
+        conn.disconnect();
+
+        System.out.println(sb.toString());
+
+        JSONObject jObject = new JSONObject(sb.toString());
+
+        return jObject.getJSONObject("body").getJSONArray("items");
+    }
+
+    private AccidentDTO jsonToDTO(JSONObject obj){
+        Long accident_id = obj.getLong("linkId");
+        String message = obj.getString("message");
+        String road_name = obj.getString("roadName");
+        Integer road_num = obj.getInt("roadNo");
+        String road_direction = obj.getString("roadDrcType");
+        Double latitude = obj.getDouble("coordX");
+        Double longitude = obj.getDouble("coordY");
+        String date_time = obj.getString("startDate");
+
+
+        return AccidentDTO.builder().accident_id(accident_id).message(message)
+                .road_name(road_name).road_num(road_num).road_direction(road_direction)
+                .latitude(latitude).longitude(longitude).date_time(date_time).build();
+    }
 
     //새로운 사고 정보 요청
-//    private boolean requestAccident() throws IOException {
-//        List<AccidentDTO> items=new ArrayList<>();
-//        //TODO: DTO를 반환하도록 items를 변경
-//        // List<AccidentDTO> items= responseItems();
-//        boolean result = false;
-//
-//        for(AccidentDTO item:items){
-//            if(!result && verifyAccident(item))
-//                result = true;
-//        }
-//
-//        return result;
-//    }
+    private boolean RequestAccident() throws IOException {
+        JSONArray items= apiConnection();
 
+        boolean result = false;
+
+        for (int i = 0; i < items.length(); i++){
+            if(verifyAccident(items.getJSONObject(i)) && !result)
+                result = true;
+        }
+
+        return result;
+    }
+
+    //사고 정보 검증
+    private synchronized boolean verifyAccident(JSONObject obj){
+        if(!memorySearchRepostiry.duplicateCheck(obj.getLong("linkId"))) {
+            AccidentDTO item = jsonToDTO(obj);
+            memorySearchRepostiry.addSearch(item.getAccident_id(), new Search(item.extractRequired(), 0, item.getLatitude(), item.getLongitude()));
+            accidentRepository.save(item.makeEntity());
+            memorySearchRepostiry.addWait(new Wait(item.getAccident_id(), item.getLatitude(), item.getLongitude()));
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    //기존 사고 조회
+   private AccidentDTO inquireAccident(double user_latitude, double user_longitude){
+        Long result = memorySearchRepostiry.inquire(user_latitude,user_longitude);
+        return result != null ? accidentRepository.findById(result).get().makeDTO() : null;
+    }
 
     //유저 사고 탐색 요청 처리
-//    public AccidentDTO searchAccident(double user_latitude, double user_longitude) throws IOException {
-//        AccidentDTO result = inquireAccident(user_latitude, user_longitude);
-//
-//        if(result != null)
-//            return result;
-//
-//        if(requestAccident()){
-//            return inquireAccident(user_latitude, user_longitude);
-//        }
-//
-//        return null;
-//    }
+    public AccidentDTO SearchAccident(double user_latitude, double user_longitude) throws IOException {
+        AccidentDTO result = inquireAccident(user_latitude, user_longitude);
+
+        if(result != null)
+            return result;
+
+        if(RequestAccident()){
+            return inquireAccident(user_latitude, user_longitude);
+        }
+
+        return null;
+    }
 
     //매칭 수락
     public synchronized boolean tryMatching(Long accident_id){
@@ -131,46 +173,5 @@ public class AccidentService {
             memorySearchRepostiry.addWait(new Wait(accident_id, target.getLatitude(), target.getLongitude()));
         }
     }
-    public String  apiConnection() throws IOException {
-        //TODO: List<AccidentDTO> 반환
-        BufferedReader rd;
-        HttpURLConnection conn;
-        StringBuilder urlBuilder = new StringBuilder(url); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("apiKey", "UTF-8") + "=" + URLEncoder.encode(apiKey, "UTF-8")); /*공개키*/
-        urlBuilder.append("&" + URLEncoder.encode("type","UTF-8") + "=" + URLEncoder.encode(type, "UTF-8")); /*도로유형*/
-        urlBuilder.append("&" + URLEncoder.encode("eventType","UTF-8") + "=" + URLEncoder.encode(eventType, "UTF-8")); /*이벤트유형*/
-        urlBuilder.append("&" + URLEncoder.encode("minX","UTF-8") + "=" + URLEncoder.encode(minX, "UTF-8")); /*최소경도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("maxX","UTF-8") + "=" + URLEncoder.encode(maxX, "UTF-8")); /*최대경도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("minY","UTF-8") + "=" + URLEncoder.encode(minY, "UTF-8")); /*최소위도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("maxY","UTF-8") + "=" + URLEncoder.encode(maxY, "UTF-8")); /*최대위도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("getType","UTF-8") + "=" + URLEncoder.encode(getType, "UTF-8")); /*출력타입*/
-        URL url = new URL(urlBuilder.toString());
-        conn = (HttpURLConnection) url.openConnection();
-        conn.setRequestMethod("GET");
-        conn.setRequestProperty("Content-type", "text/json;charset=UTF-8");
-        System.out.println("Response code: " + conn.getResponseCode());
-
-
-        if(conn.getResponseCode() >= 200 && conn.getResponseCode() <= 300) {
-            rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-        } else {
-            rd = new BufferedReader(new InputStreamReader(conn.getErrorStream()));
-        }
-
-        StringBuilder sb = new StringBuilder();
-        String line;
-        while ((line = rd.readLine()) != null) {
-            sb.append(line);
-        }
-        rd.close();
-        conn.disconnect();
-
-        return sb.toString();
-    }
-
-    public List<AccidentDTO> jsonArrayToDTOList(String items) throws JsonProcessingException {
-        ObjectMapper mapper = new ObjectMapper();
-        List<AccidentDTO> dtos = new ObjectMapper().readValue(items, new TypeReference<List<AccidentDTO>>() {});
-        return dtos;
-    }
 }
+

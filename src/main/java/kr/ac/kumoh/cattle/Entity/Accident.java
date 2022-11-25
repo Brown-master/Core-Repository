@@ -42,11 +42,11 @@ public class Accident {
     private Double longitude;
 
     @Column(name = "date_time", nullable = false)
-    private LocalDateTime date_time;
+    private String date_time;
 
 
     @Builder
-    public Accident(Long accident_id, String message, String road_name, Integer road_num, String road_direction, Double latitude, Double longitude, LocalDateTime date_time) {
+    public Accident(Long accident_id, String message, String road_name, Integer road_num, String road_direction, Double latitude, Double longitude, String date_time) {
         this.accident_id = accident_id;
         this.message = message;
         this.road_name = road_name;
@@ -57,6 +57,11 @@ public class Accident {
         this.date_time = date_time;
     }
 
+    public AccidentDTO makeDTO(){
+        return AccidentDTO.builder().accident_id(this.getId()).message(this.getMessage())
+                .road_name(this.getRoad_name()).road_num(this.getRoad_num()).road_direction(this.getRoad_direction())
+                .latitude(this.getLatitude()).longitude(this.getLongitude()).date_time(this.getDate_time()).build();
+    }
 
     public Long getId() {
         return accident_id;
@@ -86,7 +91,7 @@ public class Accident {
         return latitude;
     }
 
-    public LocalDateTime getDate_time() {
+    public String getDate_time() {
         return date_time;
     }
 
