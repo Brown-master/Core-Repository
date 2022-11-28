@@ -2,6 +2,7 @@ package kr.ac.kumoh.cattle.Repository.Data;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import org.springframework.beans.factory.annotation.Value;
 
 @Getter
 @AllArgsConstructor

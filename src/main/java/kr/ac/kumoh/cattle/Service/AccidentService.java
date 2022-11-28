@@ -12,6 +12,7 @@ import kr.ac.kumoh.cattle.Repository.AccidentRepository;
 import kr.ac.kumoh.cattle.Repository.Data.Search;
 import kr.ac.kumoh.cattle.Repository.Data.Wait;
 import kr.ac.kumoh.cattle.Repository.MemorySearchRepostiry;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.catalina.mapper.Mapper;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -24,6 +25,9 @@ import org.springframework.stereotype.Service;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Constructor;
+import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -33,6 +37,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service
+@Slf4j
 public class AccidentService {
     @Autowired
     AccidentRepository accidentRepository;
@@ -42,7 +47,7 @@ public class AccidentService {
 
 
     //API 요청
-    private JSONArray apiConnection() throws IOException {
+    public JSONArray apiConnection() throws IOException {
         BufferedReader rd;
         HttpURLConnection conn;
         StringBuilder urlBuilder = new StringBuilder("https://openapi.its.go.kr:9443/eventInfo"); /*URL*/
@@ -75,7 +80,7 @@ public class AccidentService {
         rd.close();
         conn.disconnect();
 
-        System.out.println(sb.toString());
+//        System.out.println(sb.toString());
 
         JSONObject jObject = new JSONObject(sb.toString());
 
@@ -88,8 +93,8 @@ public class AccidentService {
         String road_name = obj.getString("roadName");
         Integer road_num = obj.getInt("roadNo");
         String road_direction = obj.getString("roadDrcType");
-        Double latitude = obj.getDouble("coordX");
-        Double longitude = obj.getDouble("coordY");
+        Double latitude = obj.getDouble("coordY");
+        Double longitude = obj.getDouble("coordX");
         String date_time = obj.getString("startDate");
 
 
@@ -99,7 +104,7 @@ public class AccidentService {
     }
 
     //새로운 사고 정보 요청
-    private boolean RequestAccident() throws IOException {
+    private boolean RequestAccident() throws IOException, NoSuchFieldException, IllegalAccessException {
         JSONArray items= apiConnection();
 
         boolean result = false;
@@ -113,17 +118,22 @@ public class AccidentService {
     }
 
     //사고 정보 검증
-    private synchronized boolean verifyAccident(JSONObject obj){
+    private synchronized boolean verifyAccident(JSONObject obj) throws NoSuchFieldException, IllegalAccessException {
         if(!memorySearchRepostiry.duplicateCheck(obj.getLong("linkId"))) {
             AccidentDTO item = jsonToDTO(obj);
             memorySearchRepostiry.addSearch(item.getAccident_id(), new Search(item.extractRequired(), 0, item.getLatitude(), item.getLongitude()));
             accidentRepository.save(item.makeEntity());
             memorySearchRepostiry.addWait(new Wait(item.getAccident_id(), item.getLatitude(), item.getLongitude()));
-
+            showWaitTable();
             return true;
         }
 
         return false;
+    }
+
+    private void showWaitTable() throws NoSuchFieldException, IllegalAccessException {
+        Field table=MemorySearchRepostiry.class.getDeclaredField("wait_table");
+        log.info("table: {}", table.get(null));
     }
 
 
@@ -134,7 +144,7 @@ public class AccidentService {
     }
 
     //유저 사고 탐색 요청 처리
-    public AccidentDTO SearchAccident(double user_latitude, double user_longitude) throws IOException {
+    public AccidentDTO SearchAccident(double user_latitude, double user_longitude) throws IOException, NoSuchFieldException, IllegalAccessException {
         AccidentDTO result = inquireAccident(user_latitude, user_longitude);
 
         if(result != null)
