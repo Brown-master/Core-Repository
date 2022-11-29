@@ -1,36 +1,26 @@
 package kr.ac.kumoh.cattle.Service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.DeserializationFeature;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.type.TypeFactory;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+
+
 import kr.ac.kumoh.cattle.DTO.AccidentDTO;
 import kr.ac.kumoh.cattle.Repository.AccidentRepository;
 import kr.ac.kumoh.cattle.Repository.Data.Search;
 import kr.ac.kumoh.cattle.Repository.Data.Wait;
-import kr.ac.kumoh.cattle.Repository.MemorySearchRepostiry;
-import org.apache.catalina.mapper.Mapper;
+import kr.ac.kumoh.cattle.Repository.MemorySearchRepository;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
+
 
 @Service
 public class AccidentService {
@@ -38,7 +28,10 @@ public class AccidentService {
     AccidentRepository accidentRepository;
 
     @Autowired
-    MemorySearchRepostiry memorySearchRepostiry;
+    MemorySearchRepository searchRepository;
+
+    //@Autowired
+    //RedisSearchRepository searchRepository;
 
 
     //API 요청
@@ -88,8 +81,8 @@ public class AccidentService {
         String road_name = obj.getString("roadName");
         Integer road_num = obj.getInt("roadNo");
         String road_direction = obj.getString("roadDrcType");
-        Double latitude = obj.getDouble("coordX");
-        Double longitude = obj.getDouble("coordY");
+        Double latitude = obj.getDouble("coordY");
+        Double longitude = obj.getDouble("coordX");
         String date_time = obj.getString("startDate");
 
 
@@ -98,9 +91,60 @@ public class AccidentService {
                 .latitude(latitude).longitude(longitude).date_time(date_time).build();
     }
 
+
+    //단일 사고 조회
+    /*
+    public AccidentDTO inquireAccident(double user_latitude, double user_longitude){
+        Long result = searchRepository.inquire(user_latitude,user_longitude);
+        return result != null ? accidentRepository.findById(result).get().makeDTO() : null;
+    }
+
+
+    public synchronized boolean verifyAccident(AccidentDTO item){
+        if(!memorySearchRepostiry.duplicateCheck(item.getAccident_id())) {
+            memorySearchRepostiry.addSearch(item.getAccident_id(), new Search(item.extractRequired(), 0, item.getLatitude(), item.getLongitude()));
+            //accidentRepository.save(item.makeEntity());
+            memorySearchRepostiry.addWait(new Wait(item.getAccident_id(), item.getLatitude(), item.getLongitude()));
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    public AccidentDTO SearchAccident(double user_latitude, double user_longitude) throws IOException {
+        List<AccidentDTO> result = inquireAccident(user_latitude, user_longitude);
+
+        if(result != null)
+            return result;
+
+        if(RequestAccident()){
+            return inquireAccident(user_latitude, user_longitude);
+        }
+
+        return null;
+    }
+    */
+
+
+    //기존 사고 조회
+    public List<AccidentDTO> inquireAccident(double user_latitude, double user_longitude){
+
+        ArrayList<AccidentDTO> items = new ArrayList<AccidentDTO>();
+        List<Long> ids = searchRepository.inquire(user_latitude,user_longitude);
+        for(Long id : ids){
+            items.add(accidentRepository.findById(id).get().makeDTO());
+        }
+        return items;
+    }
+
+
     //새로운 사고 정보 요청
-    private boolean RequestAccident() throws IOException {
+    public boolean RequestAccident() throws IOException {
         JSONArray items= apiConnection();
+
+        System.out.println(items.length());
 
         boolean result = false;
 
@@ -112,13 +156,14 @@ public class AccidentService {
         return result;
     }
 
-    //사고 정보 검증
+
+    //중복사고 검증 후 정보 추가
     private synchronized boolean verifyAccident(JSONObject obj){
-        if(!memorySearchRepostiry.duplicateCheck(obj.getLong("linkId"))) {
+        if(!searchRepository.duplicateCheck(obj.getLong("linkId"))) {
             AccidentDTO item = jsonToDTO(obj);
-            memorySearchRepostiry.addSearch(item.getAccident_id(), new Search(item.extractRequired(), 0, item.getLatitude(), item.getLongitude()));
+            searchRepository.addSearch(item.getAccident_id(), new Search(item.extractRequired(), 0, item.getLatitude(), item.getLongitude()));
             accidentRepository.save(item.makeEntity());
-            memorySearchRepostiry.addWait(new Wait(item.getAccident_id(), item.getLatitude(), item.getLongitude()));
+            searchRepository.addWait(new Wait(item.getAccident_id(), item.getLatitude(), item.getLongitude()));
 
             return true;
         }
@@ -127,36 +172,30 @@ public class AccidentService {
     }
 
 
-    //기존 사고 조회
-   private AccidentDTO inquireAccident(double user_latitude, double user_longitude){
-        Long result = memorySearchRepostiry.inquire(user_latitude,user_longitude);
-        return result != null ? accidentRepository.findById(result).get().makeDTO() : null;
-    }
-
     //유저 사고 탐색 요청 처리
-    public AccidentDTO SearchAccident(double user_latitude, double user_longitude) throws IOException {
-        AccidentDTO result = inquireAccident(user_latitude, user_longitude);
+    public List<AccidentDTO> SearchAccident(double user_latitude, double user_longitude) throws IOException {
+        List<AccidentDTO> items = inquireAccident(user_latitude, user_longitude);
 
-        if(result != null)
-            return result;
-
-        if(RequestAccident()){
-            return inquireAccident(user_latitude, user_longitude);
+        if(items.size() == 0){
+            if(RequestAccident())
+                items = inquireAccident(user_latitude, user_longitude);
         }
 
-        return null;
+        return items;
     }
+
 
     //매칭 수락
     public synchronized boolean tryMatching(Long accident_id){
-        Search target = memorySearchRepostiry.getSearch(accident_id);
+        Search target = searchRepository.getSearch(accident_id);
+
         if(target.checkCleared()) {
             return false;
         }
 
         target.increaseCurrent();
         if(target.checkCleared()){
-            memorySearchRepostiry.deleteWait(accident_id);
+            searchRepository.deleteWait(accident_id);
         }
 
         return true;
@@ -165,13 +204,12 @@ public class AccidentService {
 
     //매칭 취소 (거절 아님, 수락 이후의 취소)
     public synchronized void cancelMatching(Long accident_id){
-        Search target = memorySearchRepostiry.getSearch(accident_id);
+        Search target = searchRepository.getSearch(accident_id);
 
         target.decreaseCurrent();
 
-        if(!memorySearchRepostiry.presentWait(accident_id)){
-            memorySearchRepostiry.addWait(new Wait(accident_id, target.getLatitude(), target.getLongitude()));
+        if(!searchRepository.presentWait(accident_id)){
+            searchRepository.addWait(new Wait(accident_id, target.getLatitude(), target.getLongitude()));
         }
     }
 }
-
