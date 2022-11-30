@@ -88,7 +88,6 @@ public class AccidentService {
     }
 
     private AccidentDTO jsonToDTO(JSONObject obj){
-        Long accident_id = obj.getLong("linkId");
         String message = obj.getString("message");
         String road_name = obj.getString("roadName");
         Integer road_num = obj.getInt("roadNo");
@@ -96,11 +95,18 @@ public class AccidentService {
         Double latitude = obj.getDouble("coordY");
         Double longitude = obj.getDouble("coordX");
         String date_time = obj.getString("startDate");
-
+        Long accident_id = genObjectId(date_time,latitude,longitude);
 
         return AccidentDTO.builder().accident_id(accident_id).message(message)
                 .road_name(road_name).road_num(road_num).road_direction(road_direction)
                 .latitude(latitude).longitude(longitude).date_time(date_time).build();
+    }
+
+    private Long genObjectId(String date_time, Double latitude, Double longitude) {
+        String time=date_time.substring(4,10);
+        String posY= String.valueOf((int) Math.round(latitude*1000));
+        String posX= String.valueOf((int) Math.round(longitude*1000));
+        return Long.valueOf(time+posY+posX);
     }
 
     //새로운 사고 정보 요청
