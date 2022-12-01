@@ -14,6 +14,7 @@ public class AccidentController {
     @Autowired
     AccidentService accidentService;
 
+    //단일 반환
     /*
     @GetMapping("/search")
     public AccidentDTO search(@RequestParam double latitude, @RequestParam double longitude) throws IOException {

@@ -16,6 +16,7 @@ public class MemorySearchRepository {
 
     public static ConcurrentHashMap<Long, Search> search_table = new ConcurrentHashMap<Long, Search>();
 
+    //단일 요청
     /*
     public Long inquire(double user_latitude, double user_longitude){
         for(Wait wait : wait_table){

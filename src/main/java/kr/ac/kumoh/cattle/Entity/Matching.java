@@ -9,6 +9,7 @@ import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 @Entity
 @DynamicInsert
@@ -26,14 +27,14 @@ public class Matching {
     private Long user;
 
     @Column(name = "date_time", nullable = false)
-    private LocalDateTime date_time;
+    private String date_time;
 
     @ManyToOne(cascade = {CascadeType.REMOVE, CascadeType.REFRESH}, optional = false)
     @JoinColumn(name = "accident_id", nullable = false)
     private Accident accident;
 
     @Builder
-    public Matching(Long user, Accident accident, LocalDateTime date_time){
+    public Matching(Long user, Accident accident, String date_time){
         this.user = user;
         this.accident = accident;
         this.date_time = date_time;
@@ -57,15 +58,8 @@ public class Matching {
         return accident;
     }
 
-    public LocalDateTime getDateTime() {
+    public String getDateTime() {
         return date_time;
     }
-
-//    public MatchingDTO makeDTO(){
-//        return MatchingDTO.builder().matching_id(this.getId()).
-//                user_id(this.getUser_id()).accident(this.getAccident().makeDTO())
-//                .date_time(this.getDate_time()).build();
-//    }
-
 
 }

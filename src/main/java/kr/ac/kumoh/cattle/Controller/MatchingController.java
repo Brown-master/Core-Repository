@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,7 +23,7 @@ public class MatchingController {
     public void clear(@RequestParam Long user_id, @RequestParam Long accident_id){
         matchingRepository.save(Matching.builder().user(user_id)
                 .accident(Accident.builder().accident_id(accident_id).build())
-                .date_time(LocalDateTime.now()).build());
+                .date_time(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"))).build());
     }
 
     @GetMapping("/records")

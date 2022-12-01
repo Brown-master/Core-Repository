@@ -15,10 +15,10 @@ public class MatchingDTO implements Serializable {
     private final Long matching_id;
     private final Long user_id;
     private final AccidentDTO accident;
-    private final LocalDateTime date_time;
+    private final String date_time;
 
     @Builder
-    public MatchingDTO(Long matching_id, Long user_id, AccidentDTO accident, LocalDateTime date_time){
+    public MatchingDTO(Long matching_id, Long user_id, AccidentDTO accident, String date_time){
         this.matching_id = matching_id;
         this.user_id = user_id;
         this.accident = accident;
