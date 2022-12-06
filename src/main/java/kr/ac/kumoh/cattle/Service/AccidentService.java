@@ -39,7 +39,7 @@ public class AccidentService {
 
 
     //새로운 사고 정보 요청
-    private boolean RequestAccident() throws IOException {
+    private boolean requestAccident() throws IOException {
         JSONArray items= ApiConnection.connect();
 
         System.out.println(items.length());
@@ -71,11 +71,11 @@ public class AccidentService {
 
 
     //유저 사고 탐색 요청 처리
-    public List<AccidentDTO> SearchAccident(double user_latitude, double user_longitude) throws IOException {
+    public List<AccidentDTO> searchAccident(double user_latitude, double user_longitude) throws IOException {
         List<AccidentDTO> items = inquireAccident(user_latitude, user_longitude);
 
         if(items.size() == 0){
-            if(RequestAccident())
+            if(requestAccident())
                 items = inquireAccident(user_latitude, user_longitude);
         }
 

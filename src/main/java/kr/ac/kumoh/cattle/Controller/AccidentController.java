@@ -30,7 +30,7 @@ public class AccidentController {
     public List<AccidentDTO> search(@RequestParam double latitude, @RequestParam double longitude) throws IOException {
         log.info("latitude: "+latitude);
         log.info("longitude: "+longitude);
-        return accidentService.SearchAccident(latitude, longitude);
+        return accidentService.searchAccident(latitude, longitude);
     }
 
     @GetMapping("/accept")

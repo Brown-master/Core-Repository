@@ -66,6 +66,8 @@ public class ApiConnection {
         String date_time = obj.getString("startDate");
         Long accident_id = genObjectId(date_time, latitude, longitude);
 
+        date_time = date_time.substring(0,4) + "-" + date_time.substring(4,6) + "-" + date_time.substring(6,8)
+                + " " +date_time.substring(8,10) + ":" + date_time.substring(10,12) + ":" + date_time.substring(12,14);
 
         return AccidentDTO.builder().accident_id(accident_id).message(message)
                 .road_name(road_name).road_num(road_num).road_direction(road_direction)
