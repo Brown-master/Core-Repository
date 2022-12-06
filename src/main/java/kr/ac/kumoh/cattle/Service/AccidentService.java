@@ -26,42 +26,6 @@ public class AccidentService {
     @Autowired
     MemorySearchRepository searchRepository;
 
-    //단일 사고 조회
-    /*
-    public AccidentDTO inquireAccident(double user_latitude, double user_longitude){
-        Long result = searchRepository.inquire(user_latitude,user_longitude);
-        return result != null ? accidentRepository.findById(result).get().makeDTO() : null;
-    }
-
-
-    public synchronized boolean verifyAccident(AccidentDTO item){
-        if(!memorySearchRepostiry.duplicateCheck(item.getAccident_id())) {
-            memorySearchRepostiry.addSearch(item.getAccident_id(), new Search(item.extractRequired(), 0, item.getLatitude(), item.getLongitude()));
-            //accidentRepository.save(item.makeEntity());
-            memorySearchRepostiry.addWait(new Wait(item.getAccident_id(), item.getLatitude(), item.getLongitude()));
-
-            return true;
-        }
-
-        return false;
-    }
-
-
-    public AccidentDTO SearchAccident(double user_latitude, double user_longitude) throws IOException {
-        List<AccidentDTO> result = inquireAccident(user_latitude, user_longitude);
-
-        if(result != null)
-            return result;
-
-        if(RequestAccident()){
-            return inquireAccident(user_latitude, user_longitude);
-        }
-
-        return null;
-    }
-    */
-
-
     //기존 사고 조회
     private List<AccidentDTO> inquireAccident(double user_latitude, double user_longitude){
 
@@ -102,7 +66,6 @@ public class AccidentService {
 
             return true;
         }
-
         return false;
     }
 

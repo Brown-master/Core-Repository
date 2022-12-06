@@ -6,7 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
 
-public interface MatchingRepository extends JpaRepository<Matching, Long> {
-    List<Matching> findByUser(Long user);
+public interface MatchingRepository extends JpaRepository<Matching, String> {
+    List<Matching> findByUser(String user);
 
 }

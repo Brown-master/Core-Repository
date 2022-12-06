@@ -1,6 +1,7 @@
 package kr.ac.kumoh.cattle.Service;
 
 import kr.ac.kumoh.cattle.DTO.AccidentDTO;
+import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -11,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 
+@Slf4j
 public class ApiConnection {
     static public JSONArray connect() throws IOException {
         BufferedReader rd;
@@ -45,11 +47,12 @@ public class ApiConnection {
         rd.close();
         conn.disconnect();
 
-        System.out.println(sb.toString());
-
-        JSONObject jObject = new JSONObject(sb.toString());
-
-        return jObject.getJSONObject("body").getJSONArray("items");
+//        JSONObject jObject = new JSONObject(sb.toString());
+        JSONArray array=new JSONArray("[{\"coordX\":\"126.6745\",\"coordY\":\"35.4678\",\"eventDetailType\":\"사고\",\"lanesBlocked\":\"2차로 차단\",\"endDate\":\"\",\"eventType\":\"교통사고\",\"type\":\"고속도로\",\"message\":\"(2차로,갓길)승용차관련사고처리중\",\"roadName\":\"서해안선\",\"roadDrcType\":\"종점\",\"linkId\":\"3180020702\",\"roadNo\":\"15\",\"lanesBlockType\":\"\",\"startDate\":\"20221204003825\"},\n" +
+                "{\"coordX\":\"128.3923986\",\"coordY\":\"36.1457765\",\"eventDetailType\":\"사고\",\"lanesBlocked\":\"2차로 차단\",\"endDate\":\"\",\"eventType\":\"교통사고\",\"type\":\"고속도로\",\"message\":\"(1,2차로)승용차관련사고처리중\",\"roadName\":\"경부선\",\"roadDrcType\":\"기점\",\"linkId\":\"2760435500\",\"roadNo\":\"1\",\"lanesBlockType\":\"\",\"startDate\":\"20221204001230\"},\n" +
+                "{\"coordX\":\"128.235\",\"coordY\":\"36.4005\",\"eventDetailType\":\"사고\",\"lanesBlocked\":\"2차로 차단\",\"endDate\":\"\",\"eventType\":\"교통사고\",\"type\":\"고속도로\",\"message\":\"(2차로)승용차관련사고처리중\",\"roadName\":\"중부내륙선\",\"roadDrcType\":\"기점\",\"linkId\":\"3580008304\",\"roadNo\":\"45\",\"lanesBlockType\":\"\",\"startDate\":\"20221203235227\"},\n" +
+                "{\"coordX\":\"126.5694\",\"coordY\":\"36.2668\",\"eventDetailType\":\"사고\",\"lanesBlocked\":\"2차로 차단\",\"endDate\":\"\",\"eventType\":\"교통사고\",\"type\":\"고속도로\",\"message\":\"(2차로,갓길)승용차관련사고처리중\",\"roadName\":\"서해안선\",\"roadDrcType\":\"기점\",\"linkId\":\"2870007301\",\"roadNo\":\"15\",\"lanesBlockType\":\"\",\"startDate\":\"20221204002653\"}]");
+        return array;
     }
 
     static public AccidentDTO jsonToDTO(JSONObject obj){

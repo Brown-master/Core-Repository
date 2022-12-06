@@ -26,6 +26,6 @@ value:
     max_x: 130.9198
     type: all
     url: https://openapi.its.go.kr:9443/eventInfo
-logging:
-  level:
-    sql: debug
+#logging:
+#  level:
+#    sql: debug

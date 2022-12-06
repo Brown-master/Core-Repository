@@ -2,6 +2,7 @@ package kr.ac.kumoh.cattle.Controller;
 
 import kr.ac.kumoh.cattle.DTO.AccidentDTO;
 import kr.ac.kumoh.cattle.Service.AccidentService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,6 +11,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/accident")
+@Slf4j
 public class AccidentController {
     @Autowired
     AccidentService accidentService;
@@ -26,15 +28,18 @@ public class AccidentController {
 
     @GetMapping("/search")
     public List<AccidentDTO> search(@RequestParam double latitude, @RequestParam double longitude) throws IOException {
+        log.info("latitude: "+latitude);
+        log.info("longitude: "+longitude);
         return accidentService.SearchAccident(latitude, longitude);
     }
 
-    @PostMapping("/accept")
+    @GetMapping("/accept")
     public boolean accept(@RequestParam Long accident_id){
+        log.info("accident_id"+accident_id);
         return accidentService.tryMatching(accident_id);
     }
 
-    @PostMapping("/cancel")
+    @GetMapping("/cancel")
     public void cancel(@RequestParam Long accident_id){
         accidentService.cancelMatching(accident_id);
     }
