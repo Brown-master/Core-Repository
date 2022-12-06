@@ -24,7 +24,7 @@ public class Matching {
     private Long matching_id;
 
     @Column(name = "user_id", nullable = false)
-    private Long user;
+    private String user;
 
     @Column(name = "date_time", nullable = false)
     private String date_time;
@@ -34,7 +34,7 @@ public class Matching {
     private Accident accident;
 
     @Builder
-    public Matching(Long user, Accident accident, String date_time){
+    public Matching(String  user, Accident accident, String date_time){
         this.user = user;
         this.accident = accident;
         this.date_time = date_time;
@@ -50,7 +50,7 @@ public class Matching {
         return matching_id;
     }
 
-    public Long getUser_id() {
+    public String getUser_id() {
         return user;
     }
 
