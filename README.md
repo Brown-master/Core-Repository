@@ -15,7 +15,7 @@
 이러한 기능을 통해 견인차량들이 사고 정보를 더욱 쉽게 획득할 수 있도록 하고 우선권을 통해  
 빠른 사고 현장 도착을 위한 경쟁이 줄어듬으로서 2차 사고와 혼잡 역시 줄어들 것을 기대할 수 있다. 
 
-해당 프로젝트는 서버 구동에 관련된 패키지를 포함한다.
+해당 프로젝트는 서버 구동에 관련된 패키지를 포함하며 클라이언트, DB와의 통신 API로부터 사고 데이터를 받아와 가공하는 기능을 한다. 
 
 
 
@@ -55,3 +55,35 @@
 > 'com.h2database:h2:2.1.214'
 
 > 'com.google.code.gson:gson:2.10'
+
+
+## Facakage
+`Controller` 클라리언트 통신을 위한 컨트롤러 클래스를 포함
+
+`Service` 도메인 로직을 위한 서비스 클래스를 포함
+
+`Repository` 데이터베이스 통신을 위한 리파지토리 클래스를 포함
+
+`Data` 서버에서 데이터처리를 위해 사용하는 클래스를 포함
+
+`Entity` 데이터베이스에 저장할 데이터 클래스를 포함 
+
+
+## Files
+`AccidentController.java`
+
+`MatchingController.java`
+
+`AccidentService.java`
+
+`AccidentRepository.java`
+
+`MatchingRepository.java`
+
+`MemorySearchRepository.java`
+
+`Search.java`
+
+`Wait.java`
+
+`Distance.java`
