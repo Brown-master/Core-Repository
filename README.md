@@ -32,29 +32,18 @@
 
 
 ## Dependencies
-> 'io.spring.dependency-management' version '1.0.14.RELEASE'
-
-> 'org.springframework.boot:spring-boot-starter-data-jpa'
-
-> 'org.springframework.boot:spring-boot-starter-web'
-
-> 'junit:junit:4.13.2'
-
-> 'org.projectlombok:lombok'
-
-> 'org.springframework.boot:spring-boot-devtools'
-
-> 'mysql:mysql-connector-java'
-
-> 'org.projectlombok:lombok'
-
-> 'org.springframework.boot:spring-boot-starter-test'
-
-> 'org.json:json:20220924'
-
-> 'com.h2database:h2:2.1.214'
-
-> 'com.google.code.gson:gson:2.10'
+> 'io.spring.dependency-management' version '1.0.14.RELEASE'  
+> 'org.springframework.boot:spring-boot-starter-data-jpa'  
+> 'org.springframework.boot:spring-boot-starter-web'  
+> 'junit:junit:4.13.2'  
+> 'org.projectlombok:lombok'  
+> 'org.springframework.boot:spring-boot-devtools'  
+> 'mysql:mysql-connector-java'  
+> 'org.projectlombok:lombok'  
+> 'org.springframework.boot:spring-boot-starter-test'  
+> 'org.json:json:20220924'  
+> 'com.h2database:h2:2.1.214'  
+> 'com.google.code.gson:gson:2.10'  
 
 
 ## Facakage
