@@ -3,7 +3,7 @@
 #### Project name : 견人
 #### Team name : Brown Master
 #### Project execution period : 2022.09.29~2022.12.08
-#### GIT LAB URL : [GIT LAB](https://github.com/Brown-master/Core-Repository)
+#### GIT HUB URL : [GIT HUB](https://github.com/Brown-master/Core-Repository)
 -----------------------
 ## Description
 견人은 견인차량들이 견인하게될 사고차량들을 사고현장에 도착하기 전 미리 제한적으로 할당해주는 어플로, 교통사고 발생후   
@@ -29,7 +29,7 @@
 ## Open Source, Open API
 >Spring Boot framework: version '2.7.4'
 
->its Open API [<홈페이지>](https://www.its.go.kr/opendata/opendataList?service=event)
+>its Open API [<국가교통정보센터>](https://www.its.go.kr/opendata/opendataList?service=event)
 
 
 ## Dependencies
@@ -47,7 +47,7 @@
 > 'com.google.code.gson:gson:2.10'  
 
 
-## Facakage
+## Package
 `Controller` 클라리언트 통신을 위한 컨트롤러 클래스를 포함
 
 `Service` 도메인 로직을 위한 서비스 클래스를 포함
