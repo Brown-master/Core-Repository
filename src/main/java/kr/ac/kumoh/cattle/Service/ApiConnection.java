@@ -31,10 +31,10 @@ public class ApiConnection {
         urlBuilder.append("?" + URLEncoder.encode("apiKey", "UTF-8") + "=" + URLEncoder.encode(apiKey, "UTF-8")); /*공개키*/
         urlBuilder.append("&" + URLEncoder.encode("type","UTF-8") + "=" + URLEncoder.encode(type, "UTF-8")); /*도로유형*/
         urlBuilder.append("&" + URLEncoder.encode("eventType","UTF-8") + "=" + URLEncoder.encode(eventType, "UTF-8")); /*이벤트유형*/
-        urlBuilder.append("&" + URLEncoder.encode("minX","UTF-8") + "=" + URLEncoder.encode(minY, "UTF-8")); /*최소경도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("maxX","UTF-8") + "=" + URLEncoder.encode(maxY, "UTF-8")); /*최대경도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("minY","UTF-8") + "=" + URLEncoder.encode(minX, "UTF-8")); /*최소위도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("maxY","UTF-8") + "=" + URLEncoder.encode(maxX, "UTF-8")); /*최대위도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("minX","UTF-8") + "=" + URLEncoder.encode(minX, "UTF-8")); /*최소경도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("maxX","UTF-8") + "=" + URLEncoder.encode(maxX, "UTF-8")); /*최대경도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("minY","UTF-8") + "=" + URLEncoder.encode(minY, "UTF-8")); /*최소위도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("maxY","UTF-8") + "=" + URLEncoder.encode(maxY, "UTF-8")); /*최대위도영역*/
         urlBuilder.append("&" + URLEncoder.encode("getType","UTF-8") + "=" + URLEncoder.encode(getType, "UTF-8")); /*출력타입*/
         URL url = new URL(urlBuilder.toString());
         conn = (HttpURLConnection) url.openConnection();
