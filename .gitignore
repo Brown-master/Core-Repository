@@ -25,8 +25,7 @@ bin/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-/cattle/application.yaml
-src/main/resources/keystore.p12
+
 ### NetBeans ###
 /nbproject/private/
 /nbbuild/

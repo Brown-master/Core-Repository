@@ -4,6 +4,7 @@ import kr.ac.kumoh.cattle.DTO.AccidentDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -14,18 +15,27 @@ import java.net.URLEncoder;
 
 @Slf4j
 public class ApiConnection {
+    @Value("${value.request_value.api_key}") private static String apiKey;
+    @Value("${value.request_value.url}") private static String url;
+    @Value("${value.request_value.event_type}") private static String eventType;
+    @Value("${value.request_value.get_type}") private static String getType;
+    @Value("${value.request_value.max_x}") private static String maxX;
+    @Value("${value.request_value.max_y}") private static String maxY;
+    @Value("${value.request_value.min_x}") private static String minX;
+    @Value("${value.request_value.min_y}") private static String minY;
+    @Value("${value.request_value.type}") private static String type;
     static public JSONArray connect() throws IOException {
         BufferedReader rd;
         HttpURLConnection conn;
-        StringBuilder urlBuilder = new StringBuilder("https://openapi.its.go.kr:9443/eventInfo"); /*URL*/
-        urlBuilder.append("?" + URLEncoder.encode("apiKey", "UTF-8") + "=" + URLEncoder.encode("059980d47126472a865a1fced65d1948", "UTF-8")); /*공개키*/
-        urlBuilder.append("&" + URLEncoder.encode("type","UTF-8") + "=" + URLEncoder.encode("all", "UTF-8")); /*도로유형*/
-        urlBuilder.append("&" + URLEncoder.encode("eventType","UTF-8") + "=" + URLEncoder.encode("acc", "UTF-8")); /*이벤트유형*/
-        urlBuilder.append("&" + URLEncoder.encode("minX","UTF-8") + "=" + URLEncoder.encode("124.3636", "UTF-8")); /*최소경도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("maxX","UTF-8") + "=" + URLEncoder.encode("130.9198", "UTF-8")); /*최대경도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("minY","UTF-8") + "=" + URLEncoder.encode("33.643", "UTF-8")); /*최소위도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("maxY","UTF-8") + "=" + URLEncoder.encode("38.364", "UTF-8")); /*최대위도영역*/
-        urlBuilder.append("&" + URLEncoder.encode("getType","UTF-8") + "=" + URLEncoder.encode("JSON", "UTF-8")); /*출력타입*/
+        StringBuilder urlBuilder = new StringBuilder(url); /*URL*/
+        urlBuilder.append("?" + URLEncoder.encode("apiKey", "UTF-8") + "=" + URLEncoder.encode(apiKey, "UTF-8")); /*공개키*/
+        urlBuilder.append("&" + URLEncoder.encode("type","UTF-8") + "=" + URLEncoder.encode(type, "UTF-8")); /*도로유형*/
+        urlBuilder.append("&" + URLEncoder.encode("eventType","UTF-8") + "=" + URLEncoder.encode(eventType, "UTF-8")); /*이벤트유형*/
+        urlBuilder.append("&" + URLEncoder.encode("minX","UTF-8") + "=" + URLEncoder.encode(minY, "UTF-8")); /*최소경도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("maxX","UTF-8") + "=" + URLEncoder.encode(maxY, "UTF-8")); /*최대경도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("minY","UTF-8") + "=" + URLEncoder.encode(minX, "UTF-8")); /*최소위도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("maxY","UTF-8") + "=" + URLEncoder.encode(maxX, "UTF-8")); /*최대위도영역*/
+        urlBuilder.append("&" + URLEncoder.encode("getType","UTF-8") + "=" + URLEncoder.encode(getType, "UTF-8")); /*출력타입*/
         URL url = new URL(urlBuilder.toString());
         conn = (HttpURLConnection) url.openConnection();
         conn.setRequestMethod("GET");
